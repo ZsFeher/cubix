@@ -2,6 +2,7 @@ package hu.cubix.hr.model;
 
 import java.time.LocalDateTime;
 
+
 public class Employee {
 
 	private long id;
@@ -21,10 +22,12 @@ public class Employee {
 	}
 
 	public String getJob() {
+
 		return job;
 	}
 
 	public int getSalary() {
+
 		return salary;
 	}
 
@@ -33,18 +36,22 @@ public class Employee {
 	}
 
 	public void setId(long id) {
+
 		this.id = id;
 	}
 
-	public void setJob(String job) {
+	public void setJob(String job)
+	{
 		this.job = job;
 	}
 
-	public void setSalary(int salary) {
+	public void setSalary(int salary)
+	{
 		this.salary = salary;
 	}
 
-	public void setEntryDate(LocalDateTime entryDate) {
+	public void setEntryDate(LocalDateTime entryDate)
+	{
 		this.entryDate = entryDate;
 	}
 }
