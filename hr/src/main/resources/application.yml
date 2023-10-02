@@ -1,0 +1,13 @@
+spring:
+    profiles:
+      active: notsmart
+hr:
+    workingyears:
+        firstlevel: 2.5
+        secondlevel: 5
+        thirdlevel: 10
+    payraise:
+          groundlevel: 0
+          firstlevel: 2
+          secondlevel: 5
+          thirdlevel: 10
