@@ -23,9 +23,9 @@ public class HrApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-			Employee john = new Employee(1, "programmer", 10000, LocalDateTime.of(2009, 03, 28,14, 33, 48, 640000));
-			Employee ariel = new Employee(2, "economist", 7000, LocalDateTime.of(2020, 01, 12,14, 33, 48, 640000));
-			Employee aron = new Employee(3, "cashier", 2300, LocalDateTime.of(2015, 01, 12,14, 33, 48, 640000));
+			Employee john = new Employee(1, "programmer", 10000, LocalDateTime.of(2009, 3, 28,14, 33, 48));
+			Employee ariel = new Employee(2, "economist", 7000, LocalDateTime.of(2020, 1, 12,14, 33, 48));
+			Employee aron = new Employee(3, "cashier", 2300, LocalDateTime.of(2015, 1, 12,14, 33, 48));
 
 			System.out.println(salaryService.getRaisedSalary(john));
 			System.out.println(salaryService.getRaisedSalary(ariel));

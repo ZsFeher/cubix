@@ -1,6 +1,8 @@
 package hu.cubix.hr.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +24,15 @@ public class SmartEmployeeService implements EmployeeService {
 		WorkingYears wyconf =  config.getWorkingYears();
 		PayRaise prconf = config.getPayRaise();
 
-		LocalDate now = LocalDate.now();
-		Period period = Period.between(employee.getEntryDate().toLocalDate(), now);
-		long yearsPassed = period.getYears();
+		LocalDateTime now = LocalDateTime.now();
+		long daysBetween = Duration.between( employee.getEntryDate(),now).toDays();
+		System.out.println ("Days: " + daysBetween);
 
-		if(yearsPassed < wyconf.getFirstLevel()){
+		if(daysBetween < wyconf.getFirstLevel()*365){
 			return prconf.getGroundlevel();
-		} else if(yearsPassed < wyconf.getSecondLevel()){
+		} else if(daysBetween < wyconf.getSecondLevel()*365){
 			return prconf.getFirstlevel();
-		} else if(yearsPassed < wyconf.getThirdLevel()){
+		} else if(daysBetween < wyconf.getThirdLevel()*365){
 			return prconf.getSecondlevel();
 		} else {
 			return prconf.getThirdlevel();
