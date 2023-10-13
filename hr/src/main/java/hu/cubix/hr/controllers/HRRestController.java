@@ -28,7 +28,7 @@ public class HRRestController {
 	private Map<Long, EmployeeDto> employees = new HashMap<>();
 
 	{
-		employees.put(1L, new EmployeeDto(1, "Programmer", 10000, LocalDateTime.of(2009, 3,28, 10, 10)));
+		employees.put(1L, new EmployeeDto(1, "Jackson" ,"Programmer", 10000, LocalDateTime.of(2009, 3,28, 10, 10)));
 	}
 
 	@GetMapping
