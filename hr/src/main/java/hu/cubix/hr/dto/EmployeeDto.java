@@ -4,13 +4,24 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Positive;
+
 public class EmployeeDto {
 
 	private long id;
+
+	@NotEmpty
 	private String name;
+
+	@NotEmpty
 	private String job;
+
+	@Positive
 	private int salary;
 
+	@Past
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
 	private LocalDateTime entryDate;
 
@@ -31,6 +42,14 @@ public class EmployeeDto {
 
 	public String getJob() {
 		return job;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getSalary() {
@@ -57,13 +76,6 @@ public class EmployeeDto {
 		this.entryDate = entryDate;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 
 }

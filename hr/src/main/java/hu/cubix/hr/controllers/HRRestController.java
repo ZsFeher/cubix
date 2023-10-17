@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.stream.*;
 
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,63 +19,74 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import hu.cubix.hr.dto.EmployeeDto;
+import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.service.EmployeeService;
+import hu.cubix.hr.service.ProfileEmployeeService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/employees")
 public class HRRestController {
 
-	private Map<Long, EmployeeDto> employees = new HashMap<>();
+	@Autowired
+	private ProfileEmployeeService employeeService;
 
-	{
-		employees.put(1L, new EmployeeDto(1, "Jackson" ,"Programmer", 10000, LocalDateTime.of(2009, 3,28, 10, 10)));
-	}
+	@Autowired
+	private EmployeeMapper eMapper;
 
 	@GetMapping
 	public List<EmployeeDto> listEmployees()
 	{
-		return new ArrayList<>(employees.values());
+		List<Employee> employees = employeeService.getAll();
+		return eMapper.employeeListToDto(employees);
 	}
 
 	@GetMapping("/{id}")
 	public EmployeeDto findEmployeeById(@PathVariable long id)
 	{
-		return employees.get(id);
+		Employee employee = employeeService.findById(id);
+		return eMapper.employeeToDto(employee);
 	}
 
 	@PostMapping
-	public EmployeeDto createEmployee(@RequestBody EmployeeDto employee)
+	public EmployeeDto createEmployee(@RequestBody @Valid EmployeeDto employee)
 	{
-		employees.put(employee.getId(), employee);
-		return employee;
+		Employee e = eMapper.dtoToEmployee(employee);
+
+		employeeService.create(e);
+		return eMapper.employeeToDto(e);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable long id, @RequestBody EmployeeDto employee)
+	public EmployeeDto updateEmployee(@PathVariable long id, @RequestBody EmployeeDto employee)
 	{
-		if(!employees.containsKey(id))
+		if(!employeeService.getAll().contains(id))
 		{
-			return ResponseEntity.notFound().build();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
 
-		employees.put(id, employee);
-		return ResponseEntity.ok(employee);
+		Employee e = eMapper.dtoToEmployee(employee);
+
+		Employee uEmployee = employeeService.update(e);
+		return eMapper.employeeToDto(uEmployee);
 	}
 
 	@DeleteMapping("/{id}")
 	public void deleteEmployee(@PathVariable long id)
 	{
-		employees.remove(id);
+		employeeService.delete(id);
 	}
 
 	@GetMapping("/listbysalary/{salary}")
-	public ResponseEntity<Map<Long,EmployeeDto>> listEmployeeBySalary(@PathVariable int salary)
+	public List<EmployeeDto> listEmployeeBySalary(@PathVariable int salary)
 	{
-			Map<Long,EmployeeDto> filteredEmployees = employees.entrySet().stream().filter(map -> map.getValue().getSalary() > salary).collect(Collectors.toMap(e->e.getKey(),e->e.getValue()));
+			List<Employee> filteredEmployees = employeeService.getAll().stream().filter(emp -> emp.getSalary() > salary).toList();
 
-			return ResponseEntity.ok(filteredEmployees);
+			return eMapper.employeeListToDto(filteredEmployees);
 	}
 
 }

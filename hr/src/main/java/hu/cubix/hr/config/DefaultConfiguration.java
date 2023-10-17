@@ -6,13 +6,14 @@ import org.springframework.context.annotation.Profile;
 
 import hu.cubix.hr.service.DefaultEmployeeService;
 import hu.cubix.hr.service.EmployeeService;
+import hu.cubix.hr.service.ProfileEmployeeService;
 
 @Configuration
 @Profile("!smart")
 public class DefaultConfiguration {
 
 	@Bean
-	public EmployeeService employeeService()
+	public ProfileEmployeeService employeeService()
 	{
 		return new DefaultEmployeeService();
 	}
