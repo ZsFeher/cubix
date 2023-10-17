@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Modify an employee</title>
+</head>
+<body>
+
+  <form th:action="@{/updateEmployee}" th:object="${employee}" th:method="POST">
+      <div class="form-group  mx-sm-3 mb-2">
+      Name: <input  class="form-control" th:field="*{name}" type="text" />
+      </div>
+      <div class="form-group  mx-sm-3 mb-2">
+    Job: <input  class="form-control" th:field="*{job}" type="text" />
+      </div>
+      <div class="form-group  mx-sm-3 mb-2">
+    Salary: <input  class="form-control" th:field="*{salary}" type="text" />
+      </div>
+      <div class="form-group  mx-sm-3 mb-2">
+    Entry date: <input  class="form-control" th:field="*{entryDate}" type="datetime-local" />
+      </div>
+      <input  class="form-control" type="hidden" th:field="${employee.id}" />
+      <div class="form-group  mx-sm-3 mb-2">
+      <input type="submit" class="btn btn-success form-control" text="Modify" />
+      </div>
+      <div class="form-group  mx-sm-3 mb-2">
+          <a class="btn btn-primary" th:href="@{/}">Back to list</a>
+      </div>
+  </form>
+
+</body>
+</html>

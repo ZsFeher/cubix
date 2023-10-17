@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Employee {
 
 	private long id;
+	private String name;
 	private String job;
 	private int salary;
 
@@ -18,8 +19,9 @@ public class Employee {
 	{
 	}
 
-	public Employee(long id, String job, int salary, LocalDateTime entryDate) {
+	public Employee(long id, String name, String job, int salary, LocalDateTime entryDate) {
 		this.id = id;
+		this.name = name;
 		this.job = job;
 		this.salary = salary;
 		this.entryDate = entryDate;
@@ -61,5 +63,13 @@ public class Employee {
 	public void setEntryDate(LocalDateTime entryDate)
 	{
 		this.entryDate = entryDate;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
