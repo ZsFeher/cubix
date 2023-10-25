@@ -1,5 +1,6 @@
 package hu.cubix.hr.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,11 @@ import hu.cubix.hr.model.Employee;
 public abstract class ProfileEmployeeService implements EmployeeService {
 
 	private Map<Long, Employee> employees = new HashMap<>();
+	{
+
+		employees.put(1L,new Employee(1,"Nicholas","programmer",10000, LocalDateTime.of(2009, 3,28,14,33,48)));
+
+	}
 
 	public List<Employee> getAll()
 	{

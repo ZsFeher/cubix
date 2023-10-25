@@ -64,7 +64,9 @@ public class HRRestController {
 	@PutMapping("/{id}")
 	public EmployeeDto updateEmployee(@PathVariable long id, @RequestBody EmployeeDto employee)
 	{
-		if(!employeeService.getAll().contains(id))
+		Employee emp = employeeService.findById(id);
+
+		if(emp == null)
 		{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}

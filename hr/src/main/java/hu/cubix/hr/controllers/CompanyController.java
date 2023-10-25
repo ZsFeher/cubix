@@ -126,15 +126,16 @@ public class CompanyController{
 		return ResponseEntity.ok(cMapper.companyToDto(comp));
 	}
 
-	/*@PutMapping("/replaceEmployeeList/{companyId}")
-	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable long companyId, @RequestBody List<EmployeeDto> employees)
+	@PutMapping("/replaceEmployeeList/{companyId}")
+	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable int companyId, @RequestBody List<EmployeeDto> employees)
 	{
-		if(!companies.containsKey(companyId)){
+
+		if(!companyService.getAll().contains(companyId)){
 			return ResponseEntity.notFound().build();
 		}
-		CompanyDto comp = companies.get(companyId);
+		CompanyDto comp = cMapper.companyToDto(companyService.getAll().get(companyId));
 		comp.setEmployees(employees);
 
 		return ResponseEntity.ok(comp);
-	}*/
+	}
 }
