@@ -8,18 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.service.EmployeeService;
+import hu.cubix.hr.service.ProfileEmployeeService;
 
 @RestController
 @RequestMapping("/api/salary")
 public class SalaryController {
 
 	@Autowired
-	EmployeeService employeeService;
+	ProfileEmployeeService pEmployeeService;
 
 	@GetMapping
 	public int getPayRaise(@RequestBody Employee employee)
 	{
-		int payRaise = employeeService.getPayRaisePercent(employee);
+		int payRaise = pEmployeeService.getPayRaisePercent(employee);
 
 		return payRaise;
 	}

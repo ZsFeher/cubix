@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,102 +24,116 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import hu.cubix.hr.dto.CompanyDto;
 import hu.cubix.hr.dto.EmployeeDto;
+import hu.cubix.hr.mapper.CompanyMapper;
+import hu.cubix.hr.model.Company;
+import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.service.CompanyService;
 
 @RestController
 @RequestMapping("/api/companies")
 public class CompanyController{
 
-	private Map<Long, CompanyDto> companies = new HashMap<>();
+	@Autowired
+	CompanyService companyService;
 
-	{
-		EmployeeDto karl = new EmployeeDto(1, "Karl", "programmer", 10000, LocalDateTime.of(2011, 3, 11, 8,0));
-		EmployeeDto suzan = new EmployeeDto(2, "Suzan", "chef", 7500, LocalDateTime.of(2022, 10, 2, 8,0));
-		EmployeeDto leo = new EmployeeDto(3, "Leo", "pilot", 2000, LocalDateTime.of(2016, 2, 23, 8,0));
-		EmployeeDto hannah = new EmployeeDto(4, "Hannah", "doctor", 21000, LocalDateTime.of(2023, 10, 10, 8,0));
-
-		List<EmployeeDto> employees = new ArrayList<>(List.of(karl,suzan,leo,hannah));
-		companies.put(1L, new CompanyDto(1, 110022 ,"SCC", "Békéscsaba", employees));
-	}
+	@Autowired
+	CompanyMapper cMapper;
 
 	@GetMapping
 	public List<CompanyDto> listCompanies(@RequestParam(value="full", required = false) boolean full)
 	{
+		List<CompanyDto> companies = cMapper.companyListToDto(companyService.getAll());
+
 		if(full){
-			return new ArrayList<>(companies.values());
+
+			return companies;
+
 		}
 
-		return companies.values().stream().map(CompanyDto::copyWithoutEmployees).collect(Collectors.toList());
+		return companies.stream().map(CompanyDto::copyWithoutEmployees).collect(Collectors.toList());
 	}
 
 	@GetMapping("/{id}")
 	public CompanyDto findCompanyById(@PathVariable long id, @RequestParam(value="full", required = false) boolean full)
 	{
+		Company company = companyService.findById(id);
+
 		if(full){
-			return companies.get(id);
+			return cMapper.companyToDto(company);
 		}
 
-		return companies.get(id).copyWithoutEmployees();
+		return cMapper.companyToDto(company).copyWithoutEmployees();
 	}
 
 	@PostMapping
 	public CompanyDto createCompany(@RequestBody CompanyDto company)
 	{
-		companies.put(company.getId(), company);
-		return company;
+		Company c = cMapper.dtoToCompany(company);
+
+		companyService.create(c);
+
+		return cMapper.companyToDto(c);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<CompanyDto> updateCompany(@PathVariable long id, @RequestBody CompanyDto company)
+	public CompanyDto updateCompany(@PathVariable long id, @RequestBody CompanyDto company)
 	{
-		if(!companies.containsKey(id))
+		if(!companyService.getAll().contains(id))
 		{
-			return ResponseEntity.notFound().build();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
 
-		companies.put(id, company);
-		return ResponseEntity.ok(company);
+		Company c = cMapper.dtoToCompany(company);
+
+		Company uCompany = companyService.update(c);
+
+		return cMapper.companyToDto(uCompany);
 	}
 
 	@DeleteMapping("/{id}")
 	public void deleteCompany(@PathVariable long id)
 	{
-		companies.remove(id);
+		companyService.delete(id);
 	}
 
 	@PutMapping("/addEmployee/{id}")
-	public ResponseEntity<CompanyDto> addEmployee(@PathVariable long id, @RequestBody EmployeeDto employee)
+	public ResponseEntity<CompanyDto> addEmployee(@PathVariable int id, @RequestBody EmployeeDto employee)
 	{
-		if(!companies.containsKey(id)){
+		if(!companyService.getAll().contains(id)){
 			return ResponseEntity.notFound().build();
 		}
-		companies.get(id).getEmployees().add(employee);
 
-		return ResponseEntity.ok(companies.get(id));
+		companyService.getAll().get(id).getEmployees().add(employee);
+
+		return ResponseEntity.ok(cMapper.companyToDto(companyService.getAll().get(id)));
 	}
 
 	@DeleteMapping("/deleteEmployee/{companyId}/{employeeId}")
-	public ResponseEntity<CompanyDto> deleteEmployee(@PathVariable long companyId, @PathVariable long employeeId)
+	public ResponseEntity<CompanyDto> deleteEmployee(@PathVariable int companyId, @PathVariable int employeeId)
 	{
-		if(!companies.containsKey(companyId)){
+		if(!companyService.getAll().contains(companyId)){
 			return ResponseEntity.notFound().build();
 		}
-		CompanyDto comp = companies.get(companyId);
+
+		Company comp = companyService.getAll().get(companyId);
 
 		comp.getEmployees().removeIf(emp -> emp.getId() == employeeId);
 
-		return ResponseEntity.ok(comp);
+		return ResponseEntity.ok(cMapper.companyToDto(comp));
 	}
 
 	@PutMapping("/replaceEmployeeList/{companyId}")
-	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable long companyId, @RequestBody List<EmployeeDto> employees)
+	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable int companyId, @RequestBody List<EmployeeDto> employees)
 	{
-		if(!companies.containsKey(companyId)){
+
+		if(!companyService.getAll().contains(companyId)){
 			return ResponseEntity.notFound().build();
 		}
-		CompanyDto comp = companies.get(companyId);
+		CompanyDto comp = cMapper.companyToDto(companyService.getAll().get(companyId));
 		comp.setEmployees(employees);
 
 		return ResponseEntity.ok(comp);
