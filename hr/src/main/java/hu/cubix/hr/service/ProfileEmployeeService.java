@@ -10,37 +10,52 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import hu.cubix.hr.model.Employee;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 public abstract class ProfileEmployeeService implements EmployeeService {
 
+	@PersistenceContext
+	EntityManager em;
+/*
 	private Map<Long, Employee> employees = new HashMap<>();
 	{
 
 		employees.put(1L,new Employee(1,"Nicholas","programmer",10000, LocalDateTime.of(2009, 3,28,14,33,48)));
 
 	}
+*/
 
 	public List<Employee> getAll()
 	{
-		return new ArrayList<>(employees.values());
+		return em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
 	}
 
 	public Employee findById(long id)
 	{
-		return employees.get(id);
+		return em.find(Employee.class, id);
 	}
 
+	@Transactional
 	public void delete(long id)
 	{
-		employees.remove(id);
+		em.remove(findById(id));
 	}
 
+	@Transactional
 	public Employee save(Employee employee)
 	{
-		employees.put(employee.getId(), employee);
+		if(employee.getId() == 0){
+			em.persist(employee);
+		} else {
+			employee = em.merge(employee);
+		}
+
 		return employee;
 	}
 
+	@Transactional
 	public Employee create(Employee employee)
 	{
 		if(findById(employee.getId()) != null){
@@ -50,6 +65,7 @@ public abstract class ProfileEmployeeService implements EmployeeService {
 		}
 	}
 
+	@Transactional
 	public Employee update(Employee employee)
 	{
 		if(findById(employee.getId()) == null){
@@ -58,4 +74,6 @@ public abstract class ProfileEmployeeService implements EmployeeService {
 			return save(employee);
 		}
 	}
+
+
 }

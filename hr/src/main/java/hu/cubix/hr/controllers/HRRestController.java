@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.repositories.EmployeeRepository;
 import hu.cubix.hr.service.EmployeeService;
 import hu.cubix.hr.service.ProfileEmployeeService;
 import jakarta.validation.Valid;
@@ -37,6 +39,9 @@ public class HRRestController {
 
 	@Autowired
 	private EmployeeMapper eMapper;
+
+	@Autowired
+	private EmployeeRepository eRep;
 
 	@GetMapping
 	public List<EmployeeDto> listEmployees()
@@ -91,4 +96,28 @@ public class HRRestController {
 			return eMapper.employeeListToDto(filteredEmployees);
 	}
 
+	@GetMapping("/findByJob/{job}")
+	public List<EmployeeDto> findEmployeesByJob(@PathVariable String job)
+	{
+		List<Employee> employeeList = eRep.findByJob(job);
+		System.out.println(employeeList);
+
+		return eMapper.employeeListToDto(employeeList);
+	}
+
+	@GetMapping("/findByName/{namePart}")
+	public List<EmployeeDto> findEmployeesByNamePrefix(@PathVariable String namePart)
+	{
+		List<Employee> employeeList = eRep.findByNameStartsWithIgnoreCase(namePart);
+
+		return eMapper.employeeListToDto(employeeList);
+	}
+
+	@GetMapping("/findBetween")
+	public List<EmployeeDto> findAllByEntryDateBetween(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to)
+	{
+		List<Employee> employeeList = eRep.findAllByEntryDateBetween(from, to);
+
+		return eMapper.employeeListToDto(employeeList);
+	}
 }
