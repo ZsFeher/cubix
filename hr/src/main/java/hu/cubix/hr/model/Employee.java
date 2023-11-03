@@ -4,9 +4,20 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 
+@NamedQuery(
+		name = "Employee.count",
+		query = "SELECT COUNT(e) FROM Employee e"
+)
+@Entity
 public class Employee {
 
+	@Id
+	@GeneratedValue
 	private long id;
 	private String name;
 	private String job;
