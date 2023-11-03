@@ -9,7 +9,7 @@ import hu.cubix.hr.model.Employee;
 public class SalaryService {
 
 	@Autowired
-	private ProfileEmployeeService pEmployeeService;
+	private EmployeeMainService pEmployeeService;
 
 	public int getRaisedSalary(Employee employee)
 	{
