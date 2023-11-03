@@ -26,8 +26,7 @@ import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.repositories.EmployeeRepository;
-import hu.cubix.hr.service.EmployeeService;
-import hu.cubix.hr.service.ProfileEmployeeService;
+import hu.cubix.hr.service.EmployeeMainService;
 import jakarta.validation.Valid;
 
 @RestController
