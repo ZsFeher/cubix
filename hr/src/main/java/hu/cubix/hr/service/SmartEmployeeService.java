@@ -1,9 +1,7 @@
 package hu.cubix.hr.service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +11,7 @@ import hu.cubix.hr.config.HRConfigurationProperties.PayRaise;
 import hu.cubix.hr.model.Employee;
 
 //@Service
-public class SmartEmployeeService extends ProfileEmployeeService {
+public class SmartEmployeeService extends EmployeeMainService {
 
 	@Autowired
 	private HRConfigurationProperties config;

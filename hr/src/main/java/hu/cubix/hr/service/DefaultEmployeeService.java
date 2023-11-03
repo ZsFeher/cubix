@@ -4,7 +4,7 @@ package hu.cubix.hr.service;
 import hu.cubix.hr.model.Employee;
 
 //@Service
-public class DefaultEmployeeService extends ProfileEmployeeService{
+public class DefaultEmployeeService extends EmployeeMainService {
 
 	@Override
 	public int getPayRaisePercent(Employee employee) {
