@@ -93,7 +93,7 @@ public class HRRestController {
 	@GetMapping("/listbysalary/{salary}")
 	public List<EmployeeDto> listEmployeeBySalary(@PathVariable int salary)
 	{
-			List<Employee> filteredEmployees = employeeService.getAll().stream().filter(emp -> emp.getSalary() > salary).toList();
+			List<Employee> filteredEmployees = eRep.findBySalaryGreaterThan(salary);
 
 			return eMapper.employeeListToDto(filteredEmployees);
 	}
