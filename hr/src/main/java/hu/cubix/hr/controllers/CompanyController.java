@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,10 @@ import org.springframework.web.server.ResponseStatusException;
 import hu.cubix.hr.dto.CompanyDto;
 import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.mapper.CompanyMapper;
+import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.service.CompanyService;
 
 @RestController
@@ -41,7 +44,13 @@ public class CompanyController{
 	CompanyService companyService;
 
 	@Autowired
+	CompanyRepository companyRepository;
+
+	@Autowired
 	CompanyMapper cMapper;
+
+	@Autowired
+	EmployeeMapper eMapper;
 
 	@GetMapping
 	public List<CompanyDto> listCompanies(@RequestParam(value="full", required = false) boolean full)
@@ -60,7 +69,7 @@ public class CompanyController{
 	@GetMapping("/{id}")
 	public CompanyDto findCompanyById(@PathVariable long id, @RequestParam(value="full", required = false) boolean full)
 	{
-		Company company = companyService.findById(id);
+		Company company= getCompanyOrThrow(id);
 
 		if(full){
 			return cMapper.companyToDto(company);
@@ -72,11 +81,7 @@ public class CompanyController{
 	@PostMapping
 	public CompanyDto createCompany(@RequestBody CompanyDto company)
 	{
-		Company c = cMapper.dtoToCompany(company);
-
-		companyService.create(c);
-
-		return cMapper.companyToDto(c);
+		return cMapper.companyToDto(companyService.save(cMapper.dtoToCompany(company)));
 	}
 
 	@PutMapping("/{id}")
@@ -107,7 +112,7 @@ public class CompanyController{
 			return ResponseEntity.notFound().build();
 		}
 
-		companyService.getAll().get(id).getEmployees().add(employee);
+		companyService.getAll().get(id).getEmployees().add(eMapper.dtoToEmployee(employee));
 
 		return ResponseEntity.ok(cMapper.companyToDto(companyService.getAll().get(id)));
 	}
@@ -137,5 +142,31 @@ public class CompanyController{
 		comp.setEmployees(employees);
 
 		return ResponseEntity.ok(comp);
+	}
+
+	@GetMapping("/findSalaryLimit")
+	public List<CompanyDto> findCompaniesWithSalarylimit(@RequestParam int salary)
+	{
+		List<Company> companies = companyRepository.findCompaniesWithSalaryLimit(salary);
+		return cMapper.companyListToDto(companies);
+	}
+
+	@GetMapping("/employeesAboveLimit")
+	public List<CompanyDto> findCompaniesWithExceedingEmployeeNum(@RequestParam int limit)
+	{
+		List<Company> companies = companyRepository.findByEmployeeExceedingNum(limit);
+		return cMapper.companyListToDto(companies);
+	}
+
+	@GetMapping("/averageSalariesByJob")
+	public List<Double> listAverageSalariesByJob(@RequestParam int companyId)
+	{
+		List<Double> salaryList = companyRepository.listAverageSalariesByJob(companyId);
+		return salaryList;
+	}
+
+	private Company getCompanyOrThrow(long id) {
+		return companyService.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 }

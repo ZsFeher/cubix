@@ -7,6 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 
 @NamedQuery(
@@ -23,14 +25,25 @@ public class Employee {
 	private String job;
 	private int salary;
 
+	@ManyToOne
+	private Company company;
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
 	private LocalDateTime entryDate;
+
+	public Company getCompany() {
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
+	}
 
 	public Employee()
 	{
 	}
 
-	public Employee(long id, String name, String job, int salary, LocalDateTime entryDate) {
+	public Employee(long id, String name, String job, int salary, LocalDateTime entryDate ) {
 		this.id = id;
 		this.name = name;
 		this.job = job;
@@ -83,4 +96,10 @@ public class Employee {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String toString()
+	{
+		return name;
+	}
+
 }

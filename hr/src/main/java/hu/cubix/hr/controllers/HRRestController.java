@@ -25,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.repositories.EmployeeRepository;
 import hu.cubix.hr.service.EmployeeMainService;
 import jakarta.validation.Valid;
@@ -41,6 +42,8 @@ public class HRRestController {
 
 	@Autowired
 	private EmployeeRepository eRep;
+	@Autowired
+	private CompanyRepository companyRepository;
 
 	@GetMapping
 	public List<EmployeeDto> listEmployees()
@@ -52,7 +55,7 @@ public class HRRestController {
 	@GetMapping("/{id}")
 	public EmployeeDto findEmployeeById(@PathVariable long id)
 	{
-		Employee employee = employeeService.findById(id);
+		Employee employee = findByIdOrThrow(id);
 		return eMapper.employeeToDto(employee);
 	}
 
@@ -68,7 +71,7 @@ public class HRRestController {
 	@PutMapping("/{id}")
 	public EmployeeDto updateEmployee(@PathVariable long id, @RequestBody @Valid EmployeeDto employee)
 	{
-		Employee emp = employeeService.findById(id);
+		Employee emp = findByIdOrThrow(id);
 
 		if(emp == null)
 		{
@@ -119,4 +122,9 @@ public class HRRestController {
 
 		return eMapper.employeeListToDto(employeeList);
 	}
+
+	private Employee findByIdOrThrow(long id) {
+		return employeeService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+
 }
