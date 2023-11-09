@@ -33,6 +33,7 @@ import hu.cubix.hr.mapper.CompanyMapper;
 import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.JobAndAverageSalary;
 import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.service.CompanyService;
 
@@ -159,9 +160,9 @@ public class CompanyController{
 	}
 
 	@GetMapping("/averageSalariesByJob")
-	public List<Double> listAverageSalariesByJob(@RequestParam int companyId)
+	public List<JobAndAverageSalary> listAverageSalariesByJob(@RequestParam int companyId)
 	{
-		List<Double> salaryList = companyRepository.listAverageSalariesByJob(companyId);
+		List<JobAndAverageSalary> salaryList = companyRepository.listAverageSalariesByJob(companyId);
 		return salaryList;
 	}
 

@@ -9,7 +9,7 @@ public class Position {
 	@GeneratedValue
 	private int id;
 	private String nameOfPosition;
-	private String qualification;
+	private Qualification qualification;
 	private int minSalary;
 
 
@@ -29,11 +29,11 @@ public class Position {
 		this.nameOfPosition = nameOfPosition;
 	}
 
-	public String getQualification() {
+	public Qualification getQualification() {
 		return qualification;
 	}
 
-	public void setQualification(String qualification) {
+	public void setQualification(Qualification qualification) {
 		this.qualification = qualification;
 	}
 
