@@ -21,7 +21,7 @@ public interface CompanyRepository extends JpaRepository<Company,Long> {
 	@Query(value = "SELECT c FROM Company c JOIN c.employees e GROUP BY c HAVING COUNT(e) > :limit")
 	List<Company> findByEmployeeExceedingNum(@Param("limit") int limit);
 
-	@Query(value = "SELECT e.job as job,AVG(e.salary) as averageSalary FROM Employee e WHERE e.company.id = :companyId GROUP BY e.job ORDER BY AVG(e.salary) DESC")
+	@Query(value = "SELECT e.position.name as job,AVG(e.salary) as averageSalary FROM Employee e WHERE e.company.id = :companyId GROUP BY e.position.name ORDER BY AVG(e.salary) DESC")
 	List<JobAndAverageSalary> listAverageSalariesByJob(@Param("companyId") long companyId);
 
 	Page<Company> findAll(Pageable pageable);

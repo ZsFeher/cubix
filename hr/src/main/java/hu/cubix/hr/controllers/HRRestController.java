@@ -101,7 +101,7 @@ public class HRRestController {
 	@GetMapping("/findByJob/{job}")
 	public List<EmployeeDto> findEmployeesByJob(@PathVariable String job)
 	{
-		List<Employee> employeeList = eRep.findByJob(job);
+		List<Employee> employeeList = eRep.findByPositionName(job);
 		System.out.println(employeeList);
 
 		return eMapper.employeeListToDto(employeeList);

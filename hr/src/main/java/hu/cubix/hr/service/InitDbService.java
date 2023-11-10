@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.Position;
+import hu.cubix.hr.model.Qualification;
 import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.repositories.EmployeeRepository;
+import hu.cubix.hr.repositories.PositionRepository;
 
 @Service
 public class InitDbService {
@@ -21,6 +24,9 @@ public class InitDbService {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
+	@Autowired
+	PositionRepository positionRepository;
+
 	public void clearDb()
 	{
 		employeeRepository.deleteAll();
@@ -29,12 +35,22 @@ public class InitDbService {
 
 	public void insertTestData()
 	{
+		Position pos1 = new Position("dog trainer", Qualification.HIGH_SCHOOL, 10000 );
+		Position pos2 = new Position("programmer", Qualification.HIGH_SCHOOL, 20000 );
+		Position pos3 = new Position("chef", Qualification.HIGH_SCHOOL, 7000 );
+
+		positionRepository.save(pos1);
+		positionRepository.save(pos2);
+		positionRepository.save(pos3);
+
 		Employee john = new Employee(1,"John","programmer",10000, LocalDateTime.of(2009, 3,28,14,33,48));
 		Employee chuck = new Employee(2,"Chuck","driver",7000, LocalDateTime.of(2019, 10,18,14,33,48));
 		Employee kim = new Employee(3,"Kim","programmer",15000, LocalDateTime.of(2021, 2,2,14,33,48));
 		Employee alan = new Employee(4,"Alan","cashier",2000, LocalDateTime.of(2010, 1,10,14,33,48));
 		Employee hannah = new Employee(5,"Hannah","doctor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
 		Employee joe = new Employee(6,"Joe","doctor",40000, LocalDateTime.of(2001, 10,12,14,33,48));
+
+
 
 		employeeRepository.save(john);
 		employeeRepository.save(chuck);
@@ -52,8 +68,10 @@ public class InitDbService {
 		companyRepository.save(rr);
 
 		john.setCompany(rr);
+		john.setPosition(pos1);
 		employeeRepository.save(john);
 		chuck.setCompany(rr);
+		chuck.setPosition(pos2);
 		employeeRepository.save(chuck);
 
 		List<Employee> employees2 = new ArrayList<>();
@@ -67,12 +85,16 @@ public class InitDbService {
 		companyRepository.save(zszs);
 
 		kim.setCompany(zszs);
+		kim.setPosition(pos1);
 		employeeRepository.save(kim);
 		alan.setCompany(zszs);
+		alan.setPosition(pos3);
 		employeeRepository.save(alan);
 		hannah.setCompany(zszs);
+		hannah.setPosition(pos2);
 		employeeRepository.save(hannah);
 		joe.setCompany(zszs);
+		joe.setPosition(pos2);
 		employeeRepository.save(joe);
 
 	}

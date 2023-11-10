@@ -11,7 +11,7 @@ import hu.cubix.hr.model.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-	List<Employee> findByJob(String job);
+	List<Employee> findByPositionName(String job);
 
 	List<Employee> findByNameStartsWithIgnoreCase(String namePart);
 
