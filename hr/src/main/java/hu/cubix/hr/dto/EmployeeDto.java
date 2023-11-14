@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import hu.cubix.hr.model.Position;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
@@ -15,8 +16,9 @@ public class EmployeeDto {
 	@NotEmpty
 	private String name;
 
+
 	@NotEmpty
-	private String job;
+	private Position position;
 
 	@Positive
 	private int salary;
@@ -31,7 +33,6 @@ public class EmployeeDto {
 	public EmployeeDto(long id, String name, String job, int salary, LocalDateTime entryDate) {
 		this.id = id;
 		this.name = name;
-		this.job = job;
 		this.salary = salary;
 		this.entryDate = entryDate;
 	}
@@ -40,9 +41,6 @@ public class EmployeeDto {
 		return id;
 	}
 
-	public String getJob() {
-		return job;
-	}
 
 	public String getName() {
 		return name;
@@ -64,9 +62,6 @@ public class EmployeeDto {
 		this.id = id;
 	}
 
-	public void setJob(String job) {
-		this.job = job;
-	}
 
 	public void setSalary(int salary) {
 		this.salary = salary;
@@ -76,6 +71,12 @@ public class EmployeeDto {
 		this.entryDate = entryDate;
 	}
 
+	public Position getPosition() {
+		return position;
+	}
 
+	public void setPosition(Position position) {
+		this.position = position;
+	}
 
 }

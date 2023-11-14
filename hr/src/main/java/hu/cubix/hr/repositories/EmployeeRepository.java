@@ -11,10 +11,12 @@ import hu.cubix.hr.model.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-	List<Employee> findByJob(String job);
+	List<Employee> findByPositionName(String job);
 
 	List<Employee> findByNameStartsWithIgnoreCase(String namePart);
 
 	List<Employee> findAllByEntryDateBetween(LocalDateTime from, LocalDateTime to);
+
+	List<Employee> findBySalaryGreaterThan(Integer minSalary);
 
 }

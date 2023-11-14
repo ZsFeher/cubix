@@ -5,49 +5,57 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import hu.cubix.hr.dto.CompanyDto;
 import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.repositories.CompanyRepository;
+import hu.cubix.hr.repositories.EmployeeRepository;
 
 @Service
 public class CompanyService {
 
+	@Autowired
+	CompanyRepository companyRepository;
+	@Autowired
+	private EmployeeRepository employeeRepository;
 
-	private Map<Long, Company> companies = new HashMap<>();
+	/*
+		private Map<Long, Company> companies = new HashMap<>();
 
-	{
-		EmployeeDto karl = new EmployeeDto(1, "Karl", "programmer", 10000, LocalDateTime.of(2011, 3, 11, 8,0));
-		EmployeeDto suzan = new EmployeeDto(2, "Suzan", "chef", 7500, LocalDateTime.of(2022, 10, 2, 8,0));
-		EmployeeDto leo = new EmployeeDto(3, "Leo", "pilot", 2000, LocalDateTime.of(2016, 2, 23, 8,0));
-		EmployeeDto hannah = new EmployeeDto(4, "Hannah", "doctor", 21000, LocalDateTime.of(2023, 10, 10, 8,0));
+		{
+			Employee karl = new Employee(1, "Karl", "programmer", 10000, LocalDateTime.of(2011, 3, 11, 8,0));
+			Employee suzan = new Employee(2, "Suzan", "chef", 7500, LocalDateTime.of(2022, 10, 2, 8,0));
+			Employee leo = new Employee(3, "Leo", "pilot", 2000, LocalDateTime.of(2016, 2, 23, 8,0));
+			Employee hannah = new Employee(4, "Hannah", "doctor", 21000, LocalDateTime.of(2023, 10, 10, 8,0));
 
-		List<EmployeeDto> employees = new ArrayList<>(List.of(karl,suzan,leo,hannah));
-		companies.put(1L, new Company(1, 110022 ,"SCC", "Békéscsaba", employees));
-	}
-
+			List<Employee> employees = new ArrayList<>(List.of(karl,suzan,leo,hannah));
+			companies.put(1L, new Company(1, 110022 ,"SCC", "Békéscsaba", employees));
+		}
+	*/
 	public List<Company> getAll()
 	{
-		return new ArrayList<>(companies.values());
+		return companyRepository.findAll();
 	}
 
-	public Company findById(long id)
+	public Optional<Company> findById(long id)
 	{
-		return companies.get(id);
+		return companyRepository.findById(id);
 	}
 
 	public void delete(long id)
 	{
-		companies.remove(id);
+		companyRepository.deleteById(id);
 	}
 
 	public Company save(Company company)
 	{
-		companies.put(company.getId(), company);
-		return company;
+		return companyRepository.save(company);
 	}
 
 	public Company create(Company company)
@@ -55,16 +63,46 @@ public class CompanyService {
 		if(findById(company.getId()) != null){
 			return null;
 		} else {
-			return save(company);
+			return companyRepository.save(company);
 		}
 	}
 
 	public Company update(Company company)
 	{
-		if(findById(company.getId()) == null){
+		if(!companyRepository.existsById(company.getId())) {
 			return null;
-		} else{
-			return save(company);
 		}
+		return companyRepository.save(company);
 	}
+
+	/*házi megoldás
+	public Company addEmployee(long id, Employee employee)
+	{
+		Company company = companyRepository.findById(id).get();
+		company.addEmployee(employee);
+		employeeRepository.save(employee);
+		return company;
+	}
+
+	public Company deleteEmployee(long id, long employeeId)
+	{
+		Company company = companyRepository.findById(id).get();
+		Employee employee = employeeRepository.findById(employeeId).get();
+		employee.setCompany(null);
+		company.getEmployees().remove(employee);
+		employeeReposítory.save(e);
+		return company;
+	}
+
+	public Company replaceEmployees(long id, List<Employee> employees)
+	{
+		Company company = companyRepository.findById(id).get();
+		company.getEmployees().forEach(e -> e.setCompany(null));
+		company.getEmployees().clear();
+		employees.forEach(e -> {
+			company.addEmployee(employeeRepository.save(e));
+		});
+		return company;
+	}
+	*/
 }
