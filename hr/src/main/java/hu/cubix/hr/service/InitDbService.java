@@ -43,12 +43,12 @@ public class InitDbService {
 		positionRepository.save(pos2);
 		positionRepository.save(pos3);
 
-		Employee john = new Employee(1,"John","programmer",10000, LocalDateTime.of(2009, 3,28,14,33,48));
-		Employee chuck = new Employee(2,"Chuck","driver",7000, LocalDateTime.of(2019, 10,18,14,33,48));
-		Employee kim = new Employee(3,"Kim","programmer",15000, LocalDateTime.of(2021, 2,2,14,33,48));
-		Employee alan = new Employee(4,"Alan","cashier",2000, LocalDateTime.of(2010, 1,10,14,33,48));
-		Employee hannah = new Employee(5,"Hannah","doctor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
-		Employee joe = new Employee(6,"Joe","doctor",40000, LocalDateTime.of(2001, 10,12,14,33,48));
+		Employee john = new Employee(1,"John",10000, LocalDateTime.of(2009, 3,28,14,33,48));
+		Employee chuck = new Employee(2,"Chuck",7000, LocalDateTime.of(2019, 10,18,14,33,48));
+		Employee kim = new Employee(3,"Kim",15000, LocalDateTime.of(2021, 2,2,14,33,48));
+		Employee alan = new Employee(4,"Alan",2000, LocalDateTime.of(2010, 1,10,14,33,48));
+		Employee hannah = new Employee(5,"Hannah",20000, LocalDateTime.of(2023, 9,12,14,33,48));
+		Employee joe = new Employee(6,"Joe",40000, LocalDateTime.of(2001, 10,12,14,33,48));
 
 
 

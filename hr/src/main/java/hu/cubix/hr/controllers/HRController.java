@@ -24,7 +24,7 @@ public class HRController {
 
 	{
 
-	employees.add(new Employee(1,"Nicholas","programmer",10000,LocalDateTime.of(2009, 3,28,14,33,48)));
+	employees.add(new Employee(1,"Nicholas",10000,LocalDateTime.of(2009, 3,28,14,33,48)));
 
 	}
 

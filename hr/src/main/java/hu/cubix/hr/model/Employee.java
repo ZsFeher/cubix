@@ -1,9 +1,11 @@
 package hu.cubix.hr.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -24,6 +26,7 @@ public class Employee {
 
 	//private String job;
 	@ManyToOne
+	@Nullable
 	private Position position;
 	private int salary;
 
@@ -45,8 +48,14 @@ public class Employee {
 	{
 	}
 
-	public Employee(long id, String name, String job, int salary, LocalDateTime entryDate ) {
+	public Employee(long id, String name, int salary, LocalDateTime entryDate ) {
 		this.id = id;
+		this.name = name;
+		this.salary = salary;
+		this.entryDate = entryDate;
+	}
+
+	public Employee(String name, int salary, LocalDateTime entryDate ) {
 		this.name = name;
 		this.salary = salary;
 		this.entryDate = entryDate;
@@ -101,4 +110,20 @@ public class Employee {
 		this.position = position;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Employee employee = (Employee) o;
+		return id == employee.id && salary == employee.salary && Objects.equals(name, employee.name) && Objects.equals(position, employee.position) && Objects.equals(company, employee.company) && Objects.equals(entryDate, employee.entryDate);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, position, salary, company, entryDate);
+	}
 }
