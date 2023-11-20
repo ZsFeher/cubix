@@ -16,6 +16,7 @@ import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.repositories.EmployeeRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CompanyService {
@@ -75,7 +76,7 @@ public class CompanyService {
 		return companyRepository.save(company);
 	}
 
-	/*házi megoldás
+
 	public Company addEmployee(long id, Employee employee)
 	{
 		Company company = companyRepository.findById(id).get();
@@ -84,25 +85,31 @@ public class CompanyService {
 		return company;
 	}
 
+	@Transactional
 	public Company deleteEmployee(long id, long employeeId)
 	{
 		Company company = companyRepository.findById(id).get();
 		Employee employee = employeeRepository.findById(employeeId).get();
 		employee.setCompany(null);
 		company.getEmployees().remove(employee);
-		employeeReposítory.save(e);
+		companyRepository.save(company);
+		employeeRepository.save(employee);
 		return company;
 	}
 
+	@Transactional
 	public Company replaceEmployees(long id, List<Employee> employees)
 	{
 		Company company = companyRepository.findById(id).get();
-		company.getEmployees().forEach(e -> e.setCompany(null));
+		company.getEmployees().forEach(e -> {
+			e.setCompany(null);
+			employeeRepository.save(e);
+		});
 		company.getEmployees().clear();
 		employees.forEach(e -> {
-			company.addEmployee(employeeRepository.save(e));
+			addEmployee(company.getId(), e);
 		});
 		return company;
 	}
-	*/
+
 }

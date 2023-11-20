@@ -3,9 +3,12 @@ package hu.cubix.hr.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import hu.cubix.hr.dto.CompanyDto;
+import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.model.Company;
+import hu.cubix.hr.model.Employee;
 
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {

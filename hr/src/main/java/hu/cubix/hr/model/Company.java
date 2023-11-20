@@ -46,6 +46,13 @@ public class Company {
 		this.employees = employees;
 	}
 
+	public Company(long regNum, String name, String address, List<Employee> employees) {
+		this.regNum = regNum;
+		this.name = name;
+		this.address = address;
+		this.employees = employees;
+	}
+
 	public long getId() {
 		return id;
 	}

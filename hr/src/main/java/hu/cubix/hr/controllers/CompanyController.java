@@ -109,40 +109,25 @@ public class CompanyController{
 	@PutMapping("/addEmployee/{id}")
 	public ResponseEntity<CompanyDto> addEmployee(@PathVariable int id, @RequestBody EmployeeDto employee)
 	{
-		if(!companyService.getAll().contains(id)){
-			return ResponseEntity.notFound().build();
-		}
+		companyService.addEmployee(id,eMapper.dtoToEmployee(employee));
 
-		companyService.getAll().get(id).getEmployees().add(eMapper.dtoToEmployee(employee));
-
-		return ResponseEntity.ok(cMapper.companyToDto(companyService.getAll().get(id)));
+		return ResponseEntity.ok(cMapper.companyToDto(getCompanyOrThrow(id)));
 	}
 
 	@DeleteMapping("/deleteEmployee/{companyId}/{employeeId}")
-	public ResponseEntity<CompanyDto> deleteEmployee(@PathVariable int companyId, @PathVariable int employeeId)
+	public ResponseEntity<CompanyDto> deleteEmployee(@PathVariable long companyId, @PathVariable int employeeId)
 	{
-		if(!companyService.getAll().contains(companyId)){
-			return ResponseEntity.notFound().build();
-		}
+		companyService.deleteEmployee(companyId,employeeId);
 
-		Company comp = companyService.getAll().get(companyId);
-
-		comp.getEmployees().removeIf(emp -> emp.getId() == employeeId);
-
-		return ResponseEntity.ok(cMapper.companyToDto(comp));
+		return ResponseEntity.ok(cMapper.companyToDto(getCompanyOrThrow(companyId)));
 	}
 
 	@PutMapping("/replaceEmployeeList/{companyId}")
-	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable int companyId, @RequestBody List<EmployeeDto> employees)
+	public ResponseEntity<CompanyDto> replaceEmployeeList(@PathVariable long companyId, @RequestBody List<EmployeeDto> employees)
 	{
+		companyService.replaceEmployees(companyId,eMapper.dtoListToEmployee(employees));
 
-		if(!companyService.getAll().contains(companyId)){
-			return ResponseEntity.notFound().build();
-		}
-		CompanyDto comp = cMapper.companyToDto(companyService.getAll().get(companyId));
-		comp.setEmployees(employees);
-
-		return ResponseEntity.ok(comp);
+		return ResponseEntity.ok(cMapper.companyToDto(getCompanyOrThrow(companyId)));
 	}
 
 	@GetMapping("/findSalaryLimit")
