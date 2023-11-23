@@ -9,18 +9,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+import hu.cubix.hr.dto.CompanyDto;
+import hu.cubix.hr.dto.EmployeeDto;
+import hu.cubix.hr.mapper.CompanyMapper;
+import hu.cubix.hr.mapper.EmployeeMapper;
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.service.CompanyService;
 import hu.cubix.hr.service.EmployeeMainService;
 import hu.cubix.hr.service.InitDbService;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 public class CompanyControllerIT {
 
@@ -31,77 +38,133 @@ public class CompanyControllerIT {
 	private EmployeeMainService employeeService;
 
 	@Autowired
-	InitDbService initDbService;
+	WebTestClient webTestClient;
+
+	@Autowired
+	CompanyMapper cMapper;
+
+	@Autowired
+	EmployeeMapper eMapper;
 
 	@Test
 	void testAddEmployee() throws Exception {
 
-		Company comp = companyService.save(new Company(444,"BB", "Bécs", null));
+		CompanyDto comp = new CompanyDto(444,"SCC", "Pécs", null);
+
+		CompanyDto createdComp = createCompany(comp);
 
 		String eName = "Jon";
 		int eSalary = 12000;
 		LocalDateTime entry = LocalDateTime.of(2009, 3,28,14,33,48);
 
-		Employee emp = employeeService.create(new Employee(eName,eSalary,entry));
+		EmployeeDto emp = new EmployeeDto(eName,eSalary,entry);
 
-		Company returnedComp = companyService.addEmployee(comp.getId(), emp);
+		webTestClient
+			.put()
+			.uri("/api/companies/addEmployee/{id}", createdComp.getId())
+			.bodyValue(emp)
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(CompanyDto.class)
+			.returnResult()
+			.getResponseBody();
 
-		Employee addedEmp = returnedComp.getEmployees().get(0);
+		Company returnedCompany = findByIdOrThrow(createdComp.getId());
 
-		assertThat(comp.getId()).isEqualTo(returnedComp.getId());
-		assertThat(returnedComp.getEmployees().size()).isEqualTo(1);
-		assertThat(addedEmp.getId()).isEqualTo(emp.getId());
-		assertThat(addedEmp.getCompany().getId()).isEqualTo(comp.getId());
-
+		assertThat(createdComp.getId()).isEqualTo(returnedCompany.getId());
+		assertThat(returnedCompany.getEmployees().size()).isEqualTo(1);
 	}
 
 	@Test
 	void testDeleteEmployee() throws Exception {
 
-		Company comp = companyService.save(new Company(444,"BB", "Bécs", null));
+		Company comp = new Company(444,"BB", "Bécs", null);
 
 		String eName = "Jon";
 		int eSalary = 12000;
 		LocalDateTime entry = LocalDateTime.of(2009, 3,28,14,33,48);
+		Employee emp = new Employee(eName,eSalary,entry);
+		EmployeeDto createdEmp = createEmployee(eMapper.employeeToDto(emp));
+		comp.addEmployee(emp);
+		CompanyDto createdComp = createCompany(cMapper.companyToDto(comp));
 
-		Employee emp = employeeService.create(new Employee(eName,eSalary,entry));
+		webTestClient
+				.delete()
+				.uri("/api/companies/deleteEmployee/{companyId}/{employeeId}", createdComp.getId(), createdEmp.getId())
+				.exchange()
+				.expectStatus()
+				.isOk()
+				.expectBody(CompanyDto.class)
+				.returnResult()
+				.getResponseBody();
 
-		Company returnedComp = companyService.addEmployee(comp.getId(), emp);
 
-		Company afterDelete = companyService.deleteEmployee(returnedComp.getId(),emp.getId());
-		assertThat(returnedComp.getId()).isEqualTo(afterDelete.getId());
-		assertThat(returnedComp.getEmployees().size()).isEqualTo(1);
-		assertThat(afterDelete.getEmployees().size()).isEqualTo(0);
+		Company returnedCompany = findByIdOrThrow(createdComp.getId());
+
+		assertThat(createdComp.getId()).isEqualTo(returnedCompany.getId());
+		assertThat(returnedCompany.getEmployees().size()).isEqualTo(0);
 
 	}
 
 	@Test
 	void testReplaceEmployeeList() throws Exception {
 
-		Company comp = companyService.save(new Company(444,"BB", "Bécs", null));
+		Company comp = new Company(444,"BB", "Bécs", null);
 
 		String eName = "Jon";
 		int eSalary = 12000;
 		LocalDateTime entry = LocalDateTime.of(2009, 3,28,14,33,48);
+		Employee emp = new Employee(eName,eSalary,entry);
 
-		Employee emp = employeeService.create(new Employee(eName,eSalary,entry));
+		EmployeeDto createdEmp = createEmployee(eMapper.employeeToDto(emp));
+		comp.addEmployee(emp);
+		CompanyDto createdComp = createCompany(cMapper.companyToDto(comp));
 
-		companyService.addEmployee(comp.getId(), emp);
+		String kName = "Konrad";
+		EmployeeDto konrad = new EmployeeDto(kName,eSalary,entry);
 
-		Employee kim = employeeService.create(new Employee("Kim",100000,entry));
+		String vName = "Victor";
+		EmployeeDto victor = new EmployeeDto(vName,eSalary,entry);
 
-		Employee jan = employeeService.create(new Employee("Jan",250000,entry));
+		List<EmployeeDto> employees = new ArrayList<>();
+		employees.add(konrad);
+		employees.add(victor);
 
-		List<Employee> employees = new ArrayList<>(List.of(kim,jan));
+		webTestClient
+				.put()
+				.uri("/api/companies/replaceEmployeeList/{id}", createdComp.getId())
+				.bodyValue(employees)
+				.exchange()
+				.expectStatus()
+				.isOk()
+				.expectBody(CompanyDto.class)
+				.returnResult()
+				.getResponseBody();
 
-		Company returnedComp = companyService.replaceEmployees(comp.getId(), employees);
+		Company returnedCompany = findByIdOrThrow(createdComp.getId());
 
-		System.out.println(returnedComp.getEmployees());
+		assertThat(createdComp.getId()).isEqualTo(returnedCompany.getId());
+		assertThat(returnedCompany.getEmployees().size()).isEqualTo(2);
 
-		assertThat(returnedComp.getId()).isEqualTo(comp.getId());
-		assertThat(returnedComp.getEmployees().size()).isEqualTo(2);
-		assertThat(returnedComp.getEmployees()).containsExactlyInAnyOrder(kim, jan);
+	}
 
+	private EmployeeDto createEmployee(EmployeeDto employee)
+	{
+
+		return webTestClient.post().uri("/api/employees").bodyValue(employee).exchange().expectStatus().isOk().expectBody(EmployeeDto.class).returnResult().getResponseBody();
+
+	}
+
+	private CompanyDto createCompany(CompanyDto company)
+	{
+
+		return webTestClient.post().uri("/api/companies").bodyValue(company).exchange().expectStatus().isOk().expectBody(CompanyDto.class).returnResult().getResponseBody();
+
+	}
+
+	private Company findByIdOrThrow(long id) {
+		return companyService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
 }

@@ -125,14 +125,9 @@ public class HRRestController {
 	}
 
 	@GetMapping("/search")
-	public List<EmployeeDto> searchForEmployees()
+	public List<EmployeeDto> searchForEmployees(@RequestBody @Valid EmployeeDto employee)
 	{
-		Company comp = new Company(111,"R","Bcs",null);
-		Position pos = new Position("dog trainer", null, 200);
-		Employee example = new Employee("Joh" ,9988, LocalDateTime.of(2009, 3, 29,14, 33, 48));
-		example.setPosition(pos);
-		example.setCompany(comp);
-
+		Employee example = eMapper.dtoToEmployee(employee);
 		List<Employee> employeeList = employeeService.searchEmployee(example);
 		return eMapper.employeeListToDto(employeeList);
 	}
