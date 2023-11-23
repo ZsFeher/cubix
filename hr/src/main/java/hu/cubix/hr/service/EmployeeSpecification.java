@@ -28,7 +28,7 @@ public class EmployeeSpecification {
 
 	public static Specification<Employee> positionEquals(String posName)
 	{
-		return (root, cq, cb) -> cb.equal(cb.lower(root.get(Employee_.position).get(Position_.name)), posName.toLowerCase());
+		return (root, cq, cb) -> cb.equal(root.get(Employee_.position).get(Position_.name), posName);
 	}
 
 	public static Specification<Employee> salaryApprox(int salary)

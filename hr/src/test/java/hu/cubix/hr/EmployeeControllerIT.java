@@ -30,7 +30,7 @@ public class EmployeeControllerIT {
 	{
 		List<EmployeeDto> employeesBefore = getEmployees();
 
-		EmployeeDto employee = new EmployeeDto(10, "Mike", "Pilot", 15000, LocalDateTime.of(2019, 3,28,14,33,48));
+		EmployeeDto employee = new EmployeeDto(10, "Mike", 15000, LocalDateTime.of(2019, 3,28,14,33,48));
 
 		createEmployee(employee);
 
@@ -67,12 +67,12 @@ public class EmployeeControllerIT {
 	@Test
 	void testEmployeeUpdate()
 	{
-		EmployeeDto employeeU = new EmployeeDto(1,"Nicholas","Chef",10000, LocalDateTime.of(2009, 3,28,14,33,48));
+		EmployeeDto employeeU = new EmployeeDto(1,"Nicholas",10000, LocalDateTime.of(2009, 3,28,14,33,48));
 
 		EmployeeDto updatedEmployee = updateEmployee(1,employeeU);
 
 		assertEquals(employeeU.getId(), updatedEmployee.getId());
-		assertEquals(updatedEmployee.getJob(), "Chef");
+		assertEquals(updatedEmployee.getPosition(), "Chef");
 
 	}
 /*

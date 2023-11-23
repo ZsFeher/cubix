@@ -17,7 +17,7 @@ public class EmployeeDto {
 	@NotEmpty
 	private String name;
 
-	private Position position;
+	private PositionDto position;
 
 	@Positive
 	private int salary;
@@ -26,7 +26,6 @@ public class EmployeeDto {
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
 	private LocalDateTime entryDate;
 
-
 	private Company company;
 
 	public EmployeeDto() {
@@ -34,6 +33,12 @@ public class EmployeeDto {
 
 	public EmployeeDto(long id, String name, int salary, LocalDateTime entryDate) {
 		this.id = id;
+		this.name = name;
+		this.salary = salary;
+		this.entryDate = entryDate;
+	}
+
+	public EmployeeDto(String name, int salary, LocalDateTime entryDate) {
 		this.name = name;
 		this.salary = salary;
 		this.entryDate = entryDate;
@@ -73,11 +78,11 @@ public class EmployeeDto {
 		this.entryDate = entryDate;
 	}
 
-	public Position getPosition() {
+	public PositionDto getPosition() {
 		return position;
 	}
 
-	public void setPosition(Position position) {
+	public void setPosition(PositionDto position) {
 		this.position = position;
 	}
 
