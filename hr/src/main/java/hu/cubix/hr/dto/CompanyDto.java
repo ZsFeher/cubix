@@ -23,6 +23,13 @@ public class CompanyDto implements Cloneable {
 		this.employees = employees;
 	}
 
+	public CompanyDto(long regNum, String name, String address, List<EmployeeDto> employees) {
+		this.regNum = regNum;
+		this.name = name;
+		this.address = address;
+		this.employees = employees;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -75,4 +82,11 @@ public class CompanyDto implements Cloneable {
 		return companyDto1;
 	}
 
+	@Override
+	public String toString() {
+		return "CompanyDto{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				'}';
+	}
 }
