@@ -27,9 +27,4 @@ public interface TimeOffRequestMapper {
 	@InheritInverseConfiguration
 	Employee dtoToEmployee(EmployeeDto employeeDto);
 
-	@Mapping(target = "employees", ignore = true)
-	public CompanyDto companyToDto(Company company);
-
-	public Company dtoToCompany(CompanyDto companyDto);
-
 }

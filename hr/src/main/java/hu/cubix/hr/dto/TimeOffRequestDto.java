@@ -13,15 +13,15 @@ public class TimeOffRequestDto {
 
 	private LocalDate endDate;
 
-	private Employee relatedEmployee;
+	private EmployeeDto relatedEmployee;
 
-	private Employee approver;
+	private EmployeeDto approver;
 
 	private LocalDateTime requestSentAt;
 
 	private int statusCode;
 
-	public TimeOffRequestDto(long id, LocalDate startDate, LocalDate endDate,Employee relatedEmployee, Employee approver, int statusCode) {
+	public TimeOffRequestDto(long id, LocalDate startDate, LocalDate endDate,EmployeeDto relatedEmployee, EmployeeDto approver, int statusCode) {
 		this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -29,6 +29,14 @@ public class TimeOffRequestDto {
 		this.approver = approver;
 		this.requestSentAt = LocalDateTime.now();
 		this.statusCode = statusCode;
+	}
+
+	public TimeOffRequestDto(LocalDate startDate, LocalDate endDate,EmployeeDto relatedEmployee) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.relatedEmployee = relatedEmployee;
+		this.requestSentAt = LocalDateTime.now();
+		this.statusCode = 0;
 	}
 
 	public TimeOffRequestDto() {
@@ -74,16 +82,16 @@ public class TimeOffRequestDto {
 		this.statusCode = statusCode;
 	}
 
-	public Employee getRelatedEmployee() {
+	public EmployeeDto getRelatedEmployee() {
 		return relatedEmployee;
 	}
-	public void setRelatedEmployee(Employee relatedEmployee) {
+	public void setRelatedEmployee(EmployeeDto relatedEmployee) {
 		this.relatedEmployee = relatedEmployee;
 	}
-	public Employee getApprover() {
+	public EmployeeDto getApprover() {
 		return approver;
 	}
-	public void setApprover(Employee approver) {
+	public void setApprover(EmployeeDto approver) {
 		this.approver = approver;
 	}
 }
