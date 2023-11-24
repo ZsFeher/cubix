@@ -1,6 +1,8 @@
 package hu.cubix.hr;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,9 +15,11 @@ import org.springframework.data.domain.Sort;
 
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.service.InitDbService;
 import hu.cubix.hr.service.SalaryService;
+import hu.cubix.hr.service.TimeOffRequestService;
 
 @SpringBootApplication
 public class HrApplication implements CommandLineRunner {
@@ -28,6 +32,9 @@ public class HrApplication implements CommandLineRunner {
 
 	@Autowired
 	CompanyRepository companyRepository;
+
+	@Autowired
+	TimeOffRequestService timeOffRequestService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HrApplication.class, args);
@@ -54,6 +61,30 @@ public class HrApplication implements CommandLineRunner {
 		Page<Company> pagedResult = companyRepository.findAll(firstPageWithOneElement);
 
 		System.out.println(pagedResult.getContent());
+/*
+		TimeOffRequest example = new TimeOffRequest();
+		example.setStatusCode(1);
 
+		LocalDate toStart = LocalDate.of(2023,12,1);
+		LocalDate toEnd = LocalDate.of(2023,12,31);
+
+		example.setStartDate(toStart);
+		example.setEndDate(toEnd);
+
+		LocalDateTime entry = LocalDateTime.of(2013, 10,28,14,33,48);
+
+		Employee jan = new Employee(23, "Jan", 100, entry);
+		example.setApprover(jan);
+
+		Employee vic = new Employee(25, "Victor", 100, entry);
+		example.setRelatedEmployee(vic);
+
+		LocalDateTime from = LocalDateTime.of(2023, 10,28,14,33,48);
+		LocalDateTime to = LocalDateTime.of(2023, 12,28,14,33,48);
+
+
+		List<TimeOffRequest> timeOffRequests = timeOffRequestService.searchTO(example, from, to);
+		System.out.println(timeOffRequests);
+*/
 	}
 }

@@ -1,5 +1,6 @@
 package hu.cubix.hr.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,11 @@ import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.model.Position;
 import hu.cubix.hr.model.Qualification;
+import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.repositories.CompanyRepository;
 import hu.cubix.hr.repositories.EmployeeRepository;
 import hu.cubix.hr.repositories.PositionRepository;
+import hu.cubix.hr.repositories.TimeOffRequestRepository;
 
 @Service
 public class InitDbService {
@@ -26,6 +29,9 @@ public class InitDbService {
 
 	@Autowired
 	PositionRepository positionRepository;
+
+	@Autowired
+	TimeOffRequestRepository timeOffRequestRepository;
 
 	public void clearDb()
 	{
@@ -49,8 +55,6 @@ public class InitDbService {
 		Employee alan = new Employee(4,"Alan",2000, LocalDateTime.of(2010, 1,10,14,33,48));
 		Employee hannah = new Employee(5,"Hannah",20000, LocalDateTime.of(2023, 9,12,14,33,48));
 		Employee joe = new Employee(6,"Joe",40000, LocalDateTime.of(2001, 10,12,14,33,48));
-
-
 
 		employeeRepository.save(john);
 		employeeRepository.save(chuck);
@@ -97,6 +101,14 @@ public class InitDbService {
 		joe.setPosition(pos2);
 		employeeRepository.save(joe);
 
+		Employee Victor = new Employee(7,"Victor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
+		Employee Jan = new Employee(8,"Jan",40000, LocalDateTime.of(2001, 10,12,14,33,48));
+
+		employeeRepository.save(Victor);
+		employeeRepository.save(Jan);
+
+		TimeOffRequest timeOffRequest = new TimeOffRequest(LocalDate.of(2023, 12,2), LocalDate.of(2023, 12,12),Victor, Jan, 1);
+		timeOffRequestRepository.save(timeOffRequest);
 	}
 
 }
