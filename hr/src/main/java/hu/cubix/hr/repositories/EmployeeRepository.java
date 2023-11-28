@@ -20,4 +20,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
 	List<Employee> findBySalaryGreaterThan(Integer minSalary);
 
+	Employee findByUsername(String name);
+
 }

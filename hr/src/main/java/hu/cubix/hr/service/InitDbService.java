@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hu.cubix.hr.model.Company;
@@ -32,6 +33,9 @@ public class InitDbService {
 
 	@Autowired
 	TimeOffRequestRepository timeOffRequestRepository;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	public void clearDb()
 	{
@@ -107,8 +111,12 @@ public class InitDbService {
 		employeeRepository.save(Victor);
 		employeeRepository.save(Jan);
 
-		TimeOffRequest timeOffRequest = new TimeOffRequest(LocalDate.of(2023, 12,2), LocalDate.of(2023, 12,12),Victor, Jan, 1);
-		timeOffRequestRepository.save(timeOffRequest);
+
+
+		Employee admin = new Employee("Admin", 1000, LocalDateTime.of(2010, 10,12,14,33), "admin", passwordEncoder.encode("admin"));
+		employeeRepository.save(admin);
+	/*	TimeOffRequest timeOffRequest = new TimeOffRequest(LocalDate.of(2023, 12,2), LocalDate.of(2023, 12,12),Victor, Jan, 1);
+		timeOffRequestRepository.save(timeOffRequest);*/
 	}
 
 }
