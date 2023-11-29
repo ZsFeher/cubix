@@ -39,6 +39,8 @@ public class InitDbService {
 
 	public void clearDb()
 	{
+		timeOffRequestRepository.deleteAllInBatch();
+		//positionRepository.deleteAllInBatch();
 		employeeRepository.deleteAll();
 		companyRepository.deleteAll();
 	}
@@ -105,18 +107,23 @@ public class InitDbService {
 		joe.setPosition(pos2);
 		employeeRepository.save(joe);
 
-		Employee Victor = new Employee(7,"Victor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
-		Employee Jan = new Employee(8,"Jan",40000, LocalDateTime.of(2001, 10,12,14,33,48));
-
-		employeeRepository.save(Victor);
-		employeeRepository.save(Jan);
-
-
-
 		Employee admin = new Employee("Admin", 1000, LocalDateTime.of(2010, 10,12,14,33), "admin", passwordEncoder.encode("admin"));
 		employeeRepository.save(admin);
-	/*	TimeOffRequest timeOffRequest = new TimeOffRequest(LocalDate.of(2023, 12,2), LocalDate.of(2023, 12,12),Victor, Jan, 1);
-		timeOffRequestRepository.save(timeOffRequest);*/
+
+		Employee Victor = new Employee("Victor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
+		Employee Jan = new Employee("Jan",40000, LocalDateTime.of(2001, 10,12,14,33,48));
+
+		Jan.setManager(admin);
+		employeeRepository.save(Jan);
+		Victor.setManager(Jan);
+		employeeRepository.save(Victor);
+
+
+		TimeOffRequest timeOffRequest = new TimeOffRequest(LocalDate.of(2023, 12,2), LocalDate.of(2023, 12,12),Jan, null, 0);
+		timeOffRequestRepository.save(timeOffRequest);
+
+		TimeOffRequest timeOffRequest2 = new TimeOffRequest(LocalDate.of(2024, 1,2), LocalDate.of(2024, 1,31),Victor, null, 0);
+		timeOffRequestRepository.save(timeOffRequest2);
 	}
 
 }

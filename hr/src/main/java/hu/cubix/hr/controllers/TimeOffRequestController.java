@@ -6,6 +6,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +25,7 @@ import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.dto.TimeOffRequestDto;
 import hu.cubix.hr.mapper.TimeOffRequestMapper;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.HrUser;
 import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.service.EmployeeMainService;
 import hu.cubix.hr.service.TimeOffRequestService;
@@ -60,6 +65,7 @@ public class TimeOffRequestController {
 		return trMapper.trToTRDto(timeOffRequest);
 	}
 
+	@PreAuthorize("#timeOffRequestDto.relatedEmployee.id == authentication.principal.employee.id")
 	@PutMapping("/{id}")
 	public TimeOffRequestDto updateTORequest(@PathVariable long id, @RequestBody TimeOffRequestDto timeOffRequestDto)
 	{
@@ -82,12 +88,19 @@ public class TimeOffRequestController {
 	}
 
 	@PutMapping("/approveOrDecline/{id}")
-	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam int approverId, @RequestParam int statusCode)
+	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam int statusCode)
 	{
 		TimeOffRequest existingTR = findByIdOrThrow(id);
+
+		HrUser currentUser = (HrUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if(existingTR.getRelatedEmployee().getManager().getId() != currentUser.getEmployee().getId()){
+		     throw new AccessDeniedException("Only the manager can approve or decline TimeOffRequests");
+		}
+
 		existingTR.setStatusCode(statusCode);
 
-		Employee approver = findEmployeeByIdOrThrow(approverId);
+		Employee approver = findEmployeeByIdOrThrow(currentUser.getEmployee().getId());
 		existingTR.setApprover(approver);
 
 		TimeOffRequest updated = timeOffRequestService.update(existingTR);

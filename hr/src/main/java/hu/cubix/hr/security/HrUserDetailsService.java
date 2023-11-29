@@ -9,10 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.HrUser;
 import hu.cubix.hr.repositories.EmployeeRepository;
 
 @Service
-public class EmployeeUserDetailsService implements UserDetailsService {
+public class HrUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	EmployeeRepository employeeRepository;
@@ -22,6 +23,6 @@ public class EmployeeUserDetailsService implements UserDetailsService {
 
 		Employee user = employeeRepository.findByUsername(username);
 
-		return new User(username,user.getPassword(), user.getRoles().stream().map(SimpleGrantedAuthority::new).toList());
+		return new HrUser(username,user.getPassword(), user.getRoles().stream().map(SimpleGrantedAuthority::new).toList(), user);
 	}
 }
