@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.TOStatus;
 
 public class TimeOffRequestDto {
 
@@ -19,9 +20,9 @@ public class TimeOffRequestDto {
 
 	private LocalDateTime requestSentAt;
 
-	private int statusCode;
+	private TOStatus statusCode;
 
-	public TimeOffRequestDto(long id, LocalDate startDate, LocalDate endDate,EmployeeDto relatedEmployee, EmployeeDto approver, int statusCode) {
+	public TimeOffRequestDto(long id, LocalDate startDate, LocalDate endDate,EmployeeDto relatedEmployee, EmployeeDto approver, TOStatus statusCode) {
 		this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -36,7 +37,7 @@ public class TimeOffRequestDto {
 		this.endDate = endDate;
 		this.relatedEmployee = relatedEmployee;
 		this.requestSentAt = LocalDateTime.now();
-		this.statusCode = 0;
+		this.statusCode = TOStatus.NEW;
 	}
 
 	public TimeOffRequestDto() {
@@ -74,11 +75,11 @@ public class TimeOffRequestDto {
 		this.requestSentAt = requestSentAt;
 	}
 
-	public int getStatusCode() {
+	public TOStatus getStatusCode() {
 		return statusCode;
 	}
 
-	public void setStatusCode(int statusCode) {
+	public void setStatusCode(TOStatus statusCode) {
 		this.statusCode = statusCode;
 	}
 

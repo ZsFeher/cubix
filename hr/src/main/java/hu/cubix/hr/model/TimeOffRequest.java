@@ -36,17 +36,15 @@ public class TimeOffRequest {
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
 	private LocalDateTime requestSentAt;
 
-	@Min(value = 0)
-	@Max(value = 2)
-	private int statusCode; //0 = sent, but not judged yet; 1 = approved; 2 = declined
+	private TOStatus status;
 
-	public TimeOffRequest(LocalDate startDate, LocalDate endDate, Employee relatedEmployee, Employee approver, int statusCode) {
+	public TimeOffRequest(LocalDate startDate, LocalDate endDate, Employee relatedEmployee, Employee approver, TOStatus status) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.relatedEmployee = relatedEmployee;
 		this.approver = approver;
 		this.requestSentAt = LocalDateTime.now();
-		this.statusCode = statusCode;
+		this.status = status;
 	}
 
 	public TimeOffRequest() {
@@ -100,12 +98,12 @@ public class TimeOffRequest {
 		this.requestSentAt = LocalDateTime.now();
 	}
 
-	public int getStatusCode() {
-		return statusCode;
+	public TOStatus getStatusCode() {
+		return status;
 	}
 
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
+	public void setStatusCode(TOStatus status) {
+		this.status = status;
 	}
 
 	@Override
@@ -117,7 +115,7 @@ public class TimeOffRequest {
 				", relatedEmployee=" + relatedEmployee +
 				", approver=" + approver +
 				", requestSentAt=" + requestSentAt +
-				", statusCode=" + statusCode +
+				", status=" + status +
 				'}';
 	}
 }

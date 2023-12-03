@@ -51,6 +51,7 @@ public class SecurityConfig {
 								.requestMatchers(HttpMethod.POST, "/api/login").permitAll()
 								.requestMatchers( "api/timeoffrequests/**").authenticated()
 								.requestMatchers("api/employees/**").authenticated()
+								.requestMatchers("api/timeoffrequests/**").authenticated()
 						)
 				.build();
 	}

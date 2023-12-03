@@ -26,6 +26,7 @@ import hu.cubix.hr.dto.TimeOffRequestDto;
 import hu.cubix.hr.mapper.TimeOffRequestMapper;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.model.HrUser;
+import hu.cubix.hr.model.TOStatus;
 import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.service.EmployeeMainService;
 import hu.cubix.hr.service.TimeOffRequestService;
@@ -58,7 +59,7 @@ public class TimeOffRequestController {
 
 		Employee relEmployee = findEmployeeByIdOrThrow(relEmployeeId);
 		timeOffRequest.setRelatedEmployee(relEmployee);
-		timeOffRequest.setStatusCode(0);
+		timeOffRequest.setStatusCode(TOStatus.NEW);
 
 		timeOffRequestService.send(timeOffRequest);
 
@@ -73,7 +74,7 @@ public class TimeOffRequestController {
 
 		TimeOffRequest timeOffRequest = trMapper.trDtoToTR(timeOffRequestDto);
 
-		if(timeOffRequest.getStatusCode() > 0){ //already judged, cannot be modified
+		if(timeOffRequest.getStatusCode() != TOStatus.NEW){ //already judged, cannot be modified
 			throw new ResponseStatusException(HttpStatus.NOT_MODIFIED);
 		}
 
@@ -88,29 +89,14 @@ public class TimeOffRequestController {
 	}
 
 	@PutMapping("/approveOrDecline/{id}")
-	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam int statusCode)
+	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam TOStatus status)
 	{
-		TimeOffRequest existingTR = findByIdOrThrow(id);
-
-		HrUser currentUser = (HrUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		if(existingTR.getRelatedEmployee().getManager().getId() != currentUser.getEmployee().getId()){
-		     throw new AccessDeniedException("Only the manager can approve or decline TimeOffRequests");
-		}
-
-		existingTR.setStatusCode(statusCode);
-
-		Employee approver = findEmployeeByIdOrThrow(currentUser.getEmployee().getId());
-		existingTR.setApprover(approver);
-
-		TimeOffRequest updated = timeOffRequestService.update(existingTR);
-
-		return trMapper.trToTRDto(updated);
-
+		TimeOffRequest tr = timeOffRequestService.approveOrDecline(id,status);
+		return trMapper.trToTRDto(tr);
 	}
 
 	@GetMapping("/search")
-	public List<TimeOffRequest> searchForTO(@RequestBody TimeOffRequest timeOffRequest, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to)
+	public List<TimeOffRequest> searchForTO(@RequestBody TimeOffRequest timeOffRequest, @RequestParam(value = "from", required=false) LocalDateTime from, @RequestParam(value = "to", required=false) LocalDateTime to)
 	{
 		List<TimeOffRequest> tos = timeOffRequestService.searchTO(timeOffRequest,from,to);
 		return tos;
