@@ -6,6 +6,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +25,8 @@ import hu.cubix.hr.dto.EmployeeDto;
 import hu.cubix.hr.dto.TimeOffRequestDto;
 import hu.cubix.hr.mapper.TimeOffRequestMapper;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.HrUser;
+import hu.cubix.hr.model.TOStatus;
 import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.service.EmployeeMainService;
 import hu.cubix.hr.service.TimeOffRequestService;
@@ -53,13 +59,14 @@ public class TimeOffRequestController {
 
 		Employee relEmployee = findEmployeeByIdOrThrow(relEmployeeId);
 		timeOffRequest.setRelatedEmployee(relEmployee);
-		timeOffRequest.setStatusCode(0);
+		timeOffRequest.setStatusCode(TOStatus.NEW);
 
 		timeOffRequestService.send(timeOffRequest);
 
 		return trMapper.trToTRDto(timeOffRequest);
 	}
 
+	@PreAuthorize("#timeOffRequestDto.relatedEmployee.id == authentication.principal.employee.id")
 	@PutMapping("/{id}")
 	public TimeOffRequestDto updateTORequest(@PathVariable long id, @RequestBody TimeOffRequestDto timeOffRequestDto)
 	{
@@ -67,7 +74,7 @@ public class TimeOffRequestController {
 
 		TimeOffRequest timeOffRequest = trMapper.trDtoToTR(timeOffRequestDto);
 
-		if(timeOffRequest.getStatusCode() > 0){ //already judged, cannot be modified
+		if(timeOffRequest.getStatusCode() != TOStatus.NEW){ //already judged, cannot be modified
 			throw new ResponseStatusException(HttpStatus.NOT_MODIFIED);
 		}
 
@@ -82,22 +89,14 @@ public class TimeOffRequestController {
 	}
 
 	@PutMapping("/approveOrDecline/{id}")
-	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam int approverId, @RequestParam int statusCode)
+	public TimeOffRequestDto approveOrDeclineTO(@PathVariable long id, @RequestParam TOStatus status)
 	{
-		TimeOffRequest existingTR = findByIdOrThrow(id);
-		existingTR.setStatusCode(statusCode);
-
-		Employee approver = findEmployeeByIdOrThrow(approverId);
-		existingTR.setApprover(approver);
-
-		TimeOffRequest updated = timeOffRequestService.update(existingTR);
-
-		return trMapper.trToTRDto(updated);
-
+		TimeOffRequest tr = timeOffRequestService.approveOrDecline(id,status);
+		return trMapper.trToTRDto(tr);
 	}
 
 	@GetMapping("/search")
-	public List<TimeOffRequest> searchForTO(@RequestBody TimeOffRequest timeOffRequest, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to)
+	public List<TimeOffRequest> searchForTO(@RequestBody TimeOffRequest timeOffRequest, @RequestParam(value = "from", required=false) LocalDateTime from, @RequestParam(value = "to", required=false) LocalDateTime to)
 	{
 		List<TimeOffRequest> tos = timeOffRequestService.searchTO(timeOffRequest,from,to);
 		return tos;

@@ -10,14 +10,15 @@ import hu.cubix.hr.model.Company_;
 import hu.cubix.hr.model.Employee;
 import hu.cubix.hr.model.Employee_;
 import hu.cubix.hr.model.Position_;
+import hu.cubix.hr.model.TOStatus;
 import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.model.TimeOffRequest_;
 
 public class TimeOffRequestSpecification {
 
-	public static Specification<TimeOffRequest> statusEquals(int statusCode)
+	public static Specification<TimeOffRequest> statusEquals(TOStatus statusCode)
 	{
-		return (root, cq, cb) -> cb.equal(root.get(TimeOffRequest_.statusCode), statusCode);
+		return (root, cq, cb) -> cb.equal(root.get(TimeOffRequest_.status), statusCode);
 	}
 
 	public static Specification<TimeOffRequest> nameStartsWith(String name)
