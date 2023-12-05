@@ -34,16 +34,16 @@ public class JwtService {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
-//	@Autowired
-//	private HRConfigurationProperties config;
-
-//	String alg = config.getSecurityConf().getAlgorithm();
+	@Autowired
+	private HRConfigurationProperties config;
 
 	public String createJwt(HrUser userDetails){
 
 		String[] managedArray = (getManagedEmployees(userDetails.getEmployee().getId())).stream().map(NameAndId::getName).toArray(String[]::new);
 
 		Employee manager = userDetails.getEmployee().getManager();
+
+		//String alg = config.getSecurityConf().getAlgorithm();
 
 		return JWT.create()
 				.withSubject(userDetails.getUsername())
@@ -54,16 +54,16 @@ public class JwtService {
 				.withClaim("Manager Id", manager != null ? manager.getId() : null)
 				.withArrayClaim("Managed employees", managedArray)
 				.withArrayClaim("auth", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new))
-				.withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)))
-				.withIssuer("HrApplication")
-				.sign(Algorithm.HMAC256("secret"));
+				.withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(config.getSecurityConf().getExpiryinterval())))
+				.withIssuer(config.getSecurityConf().getIssuer())
+				.sign(Algorithm.HMAC256(config.getSecurityConf().getSecret()));
 
 	}
 
 	public UserDetails parseJWT(String jwtToken) {
 
 		DecodedJWT decodedJwt = JWT.require(Algorithm.HMAC256("secret"))
-				.withIssuer("HrApplication")
+				.withIssuer(config.getSecurityConf().getIssuer())
 				.build()
 				.verify(jwtToken);
 

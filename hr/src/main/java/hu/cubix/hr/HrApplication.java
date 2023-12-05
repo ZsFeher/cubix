@@ -3,6 +3,7 @@ package hu.cubix.hr;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,8 +16,10 @@ import org.springframework.data.domain.Sort;
 
 import hu.cubix.hr.model.Company;
 import hu.cubix.hr.model.Employee;
+import hu.cubix.hr.model.NameAndId;
 import hu.cubix.hr.model.TimeOffRequest;
 import hu.cubix.hr.repositories.CompanyRepository;
+import hu.cubix.hr.repositories.EmployeeRepository;
 import hu.cubix.hr.service.InitDbService;
 import hu.cubix.hr.service.SalaryService;
 import hu.cubix.hr.service.TimeOffRequestService;
@@ -32,6 +35,9 @@ public class HrApplication implements CommandLineRunner {
 
 	@Autowired
 	CompanyRepository companyRepository;
+
+	@Autowired
+	EmployeeRepository employeeRepository;
 
 	@Autowired
 	TimeOffRequestService timeOffRequestService;
@@ -62,6 +68,11 @@ public class HrApplication implements CommandLineRunner {
 
 		System.out.println(pagedResult.getContent());
 /*
+		Employee admin1 = employeeRepository.findByUsername("admin");
+		List<NameAndId> managedEmployees = employeeRepository.getManagedEmployees(admin1.getId());
+
+		System.out.println(managedEmployees.stream().map(NameAndId::getName).toArray(String[]::new));
+
 		TimeOffRequest example = new TimeOffRequest();
 		example.setStatusCode(1);
 
