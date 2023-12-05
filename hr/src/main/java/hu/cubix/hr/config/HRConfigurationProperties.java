@@ -3,6 +3,8 @@ package hu.cubix.hr.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import com.auth0.jwt.algorithms.Algorithm;
+
 @ConfigurationProperties(prefix = "hr")
 @Component
 public class HRConfigurationProperties {
@@ -107,6 +109,56 @@ public class HRConfigurationProperties {
 
 		public void setThirdlevel(int thirdlevel) {
 			this.thirdlevel = thirdlevel;
+		}
+	}
+
+	private SecurityConf securityConf;
+
+	public SecurityConf getSecurityConf() {
+		return securityConf;
+	}
+
+	public void setSecurityConf(SecurityConf securityConf) {
+		this.securityConf = securityConf;
+	}
+
+	public static class SecurityConf
+	{
+		private String secret;
+		private int expiryinterval;
+		private String issuer;
+		private String algorithm;
+
+		public String getSecret() {
+			return secret;
+		}
+
+		public void setSecret(String secret) {
+			this.secret = secret;
+		}
+
+		public int getExpiryinterval() {
+			return expiryinterval;
+		}
+
+		public void setExpiryinterval(int expiryinterval) {
+			this.expiryinterval = expiryinterval;
+		}
+
+		public String getIssuer() {
+			return issuer;
+		}
+
+		public void setIssuer(String issuer) {
+			this.issuer = issuer;
+		}
+
+		public String getAlgorithm() {
+			return algorithm;
+		}
+
+		public void setAlgorithm(String algorithm) {
+			this.algorithm = algorithm;
 		}
 	}
 }

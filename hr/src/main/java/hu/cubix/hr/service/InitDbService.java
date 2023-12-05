@@ -113,9 +113,12 @@ public class InitDbService {
 		Employee admin = new Employee("Admin", 1000, LocalDateTime.of(2010, 10,12,14,33), "admin", passwordEncoder.encode("admin"));
 		employeeRepository.save(admin);
 
-		Employee Victor = new Employee("Victor",20000, LocalDateTime.of(2023, 9,12,14,33,48));
-		Employee Jan = new Employee("Jan",40000, LocalDateTime.of(2001, 10,12,14,33,48));
+		Employee Victor = new Employee("Victor",20000, LocalDateTime.of(2023, 9,12,14,33));
+		Employee Jan = new Employee("Jan",40000, LocalDateTime.of(2001, 10,12,14,33), "jan", passwordEncoder.encode("jan"));
+		Employee Robert = new Employee("Robert",1300, LocalDateTime.of(2011, 2,8,14,33));
 
+		Robert.setManager(admin);
+		employeeRepository.save(Robert);
 		Jan.setManager(admin);
 		employeeRepository.save(Jan);
 		Victor.setManager(Jan);
